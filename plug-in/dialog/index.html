@@ -1,0 +1,219 @@
+﻿<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <title>dialog</title>
+	<style type="text/css">
+        *{margin:0;padding:0;}
+        .doc{margin:20px 0 0 30px;}
+        pre,textarea{border:1px solid #ccc;background:#f8f8f8;width:90%;}
+    </style>
+	
+	<link rel="stylesheet" href="css/mx_dialog.css" />
+	<script type="text/javascript" src="../mx.js"></script>
+    <script type="text/javascript" src="../../src/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../../src/Jun.template.js"></script>
+	<script type="text/javascript" src="../common.js"></script>
+	<!---->
+    <script type="text/javascript" src="js/Resize.js"></script>
+    <script type="text/javascript" src="js/DragElement.js"></script>
+    <script type="text/javascript" src="js/Dialog.js"></script>
+	
+	<!--压缩以后的-->
+	<!-- <script type="text/javascript" src="mxDialog.min.js"></script> -->
+	
+	
+    <!--设置语言-->
+    <script type="text/javascript" src="js/config.js"></script>
+	
+   
+   <style type="text/css">
+	.hidden{display:none;}
+   </style>
+</head>
+<body>
+
+	<div class="mx-dialog-warp hidden" >
+		
+		<div class="mx-dialog mx-dialog-default" style="width: 680px; height: 300px; left: 300px; top: 0px; z-index: 106;">
+			<div class="mx-dialog-skin" style="position:absolute;bottom:0;left:0;right:0;top:0;">
+				<div class="mx-dialog-t mx-dialog-change" style="" data-dir="t"></div>    
+				<div class="mx-dialog-b mx-dialog-change" style="" data-dir="b"></div>    
+				<div class="mx-dialog-r mx-dialog-change" style="" data-dir="r"></div>    
+				<div class="mx-dialog-l mx-dialog-change" style="" data-dir="l"></div>    
+				<div class="mx-dialog-tr mx-dialog-change" style="" data-dir="tr"></div>    
+				<div class="mx-dialog-tl mx-dialog-change" style="" data-dir="tl"></div>    
+				<div class="mx-dialog-br mx-dialog-change" style="" data-dir="br"></div>    
+				<div class="mx-dialog-bl mx-dialog-change" style="" data-dir="bl"></div>    
+				<div class="mx-dialog-title">
+					<div class="mx-dialog-title-in">     
+						<div class="mx-dialog-tool"><a href="###" class="mx-dialog-home" title="主页"></a></div>     
+						<h1 class="mx-dialog-h1">MoXian</h1>     
+						<div class="mx-dialog-buttons">             
+							<a href="###" class="mx-dialog-maximize" title="最大化"></a>       
+							<a href="###" class="mx-dialog-restore" style="display:none;" title="还原"></a>                   
+							<a href="###" class="mx-dialog-close" title="关闭"></a>           
+						</div>    
+					</div>
+				</div>    
+				<div class="mx-dialog-content" style="height:100%;left:0;top:0;">     
+					<iframe class="mx-dialog-iframe" src="http://www.google.com" hidefocus frameborder="no" allowtransparency="true" height="100%" width="100%"></iframe>    
+				</div>
+			</div>		
+		</div>
+		
+	</div>
+	
+	
+    <div class="doc">
+		<div style="position:fixed;left:444px;top:350px;width:100px;height:100px;background:#f30;" id="movebox">
+			一个可拖动的框	
+		</div>
+	<textarea style="height:200px;" >
+	
+	var dialog = new MX.ui.Dialog({
+		isMaximize:true,//最大化按钮
+		isResize:true,//伸缩
+		isMove:true,//可移动移动
+		url:'http://www.google.com',
+		width:300,
+		height:300,
+		overflow:false
+	});
+	dialog.init();
+	</textarea>
+	<br/><br/>
+	<input type="button" value="弹出" onclick="btn1()" /> <input type="button" value="弹出" onclick="btn4()" />
+	<br/><br/><br/><br/>
+	
+	
+	<textarea style="height:200px;" >
+	
+	dialog = new MX.ui.Dialog({
+		isMaximize:true,//最大化按钮
+		isResize:true,//伸缩
+		isMove:true,//可移动移动
+		skin:'classical',
+		//isRange:false,
+		url:"http://www.google.com"
+	});
+	dialog.init();
+	</textarea>
+	<br/><br/>
+	<input type="button" value="弹出" onclick="btn2()" />  <input type="button" value="弹出" onclick="btn3()" />
+	<br/><br/><br/><br/>
+	
+	
+	
+	<textarea style="height:200px;" >
+	
+	new MX.kit.DragElement({
+		dragElement:$('#movebox'),
+		moveElement:$('#movebox'),
+		isRange:true,
+		isResize:false,
+		offsetTop:0
+	});
+		
+		
+	</textarea>
+	<br/>
+	
+    <script type="text/javascript">
+        
+		var dragElement = new MX.kit.DragElement({
+			dragElement:$('#movebox'),
+            moveElement:$('#movebox'),
+            isRange:true,
+            isResize:true,
+			offsetTop:0
+		});
+		dragElement.init();
+		
+		function btn1(){
+			var dialog = new MX.ui.Dialog({
+				isMaximize:true,//最大化按钮
+				isResize:true,//伸缩
+				isMove:true,//可移动移动
+				url:'http://www.baidu.com',
+				width:720,
+				height:300
+				//overflow:false
+			});
+			dialog.init();
+        }
+		
+		function btn2(){
+			dialog = new MX.ui.Dialog({
+				isMaximize:true,//最大化按钮
+				isResize:true,//伸缩
+				isMove:true,//可移动移动
+				skin:'classical',
+				width:300,
+				height:200,
+				//isRange:false,
+				url:"http://www.baidu.com"
+			});
+			dialog.init();
+        }
+    
+		
+		function btn3(){
+			dialog = new MX.ui.Dialog({
+				isMaximize:true,//最大化按钮
+				isResize:true,//伸缩
+				isMove:true,//可移动移动
+				skin:'classical',
+				//isRange:false,
+				html:'<div style="width:400px;height:100px;background:#f30"></div>'
+			});
+			dialog.init();
+        }
+		
+		
+		function btn4(){
+			dialog = new MX.ui.Dialog({
+				isMaximize:true,//最大化按钮
+				isResize:true,//伸缩
+				isMove:true,//可移动移动
+				//isRange:false,
+				isMask:false,
+				right:10,
+				bottom:10,
+				html:'<div style="width:500px;height:100px;background:#f30"></div>'
+			});
+			dialog.init();
+        }
+        /**
+        var drag = new DragElement({
+            dragElement:$('#mxDialogTitle'),
+            moveElement:$('#mxDialog')//,
+            //isRange:false
+        });
+        
+        drag.onready = function(){
+            var _this = this;
+            $(window).resize(function(){
+                _this.setRangeWindow();
+            });
+        };
+        drag.onmove = function(x, y){
+            //ctx.printPoint(x ,y);
+        };
+        drag.onfocus = function(){
+            //console.log(x, y);
+            //$('#mask').show();
+        };
+        drag.onblur = function(){
+            //console.log(x, y);
+            //$('#mask').hide();
+        };
+        
+        drag.init();
+        */
+    </script>
+	<br/>
+	<iframe src="http://www.google.com" hidefocus="" frameborder="1" allowtransparency="true" height="300" width="300" scrolling="no"></iframe>
+	</div>
+</body>
+</html>

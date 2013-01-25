@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>SVG Circle</title>
+	<script type="text/javascript" src="../src/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../src/DragElement.js"></script>
+		<script type="text/javascript" src="svg.js"></script>
+	<script type="text/javascript" src="js/svgnode.js"></script>
+	<script type="text/javascript" src="js/svgcircle.js"></script>
+
+	<style type="text/css">
+		body{margin:0;padding:0;}
+		.wrapper{position:relative;}
+		.handle{border:2px solid #2cb5fa;width:10px;height:10px;position:absolute;border-radius:15px;background:#fff;
+			margin-left:-7px;margin-top:-7px;cursor:pointer;
+		}
+	</style>
+</head>
+<body >
+	<div style="position:absolute;z-index:10;right:0;">
+		<ul>
+			<li>填充顏色:<input type="text" id="fill" value="#dc6c40" /></li>
+			<li>边框颜色:<input type="text" id="stroke" value="#f30" /></li>
+			<li>边框宽度:<input type="text" id="strokeWidth" value="2" /></li>
+		</ul>
+	</div>
+	<div class="wrapper">
+		<svg width="1000" height="768" id="svg" >
+			
+		</svg>
+		
+	</div>
+	<!--<circle  cx="10" cy="50" r="5" fill="#fff" stroke="#cee2e9" stroke-width="2px" ></circle>-->
+	<script type="text/javascript">
+		
+		
+		
+		
+		
+		
+		var circle = new SVGCircle( 100, 100, 100 );
+		
+		circle.setFill( $('#fill').val() );
+		circle.setStroke( $('#stroke').val() );
+		circle.setStrokeWidth( $('#strokeWidth').val() );
+		
+		document.getElementById("svg").appendChild( circle.node );
+		
+		
+		
+		/**属性设置*/
+		
+		$('#fill')[0].oninput = function(){
+			circle.setFill( $(this).val() );
+		};
+		
+		$('#stroke')[0].oninput = function(){
+			circle.setStroke( $(this).val() );
+		};
+		
+		$('#strokeWidth')[0].oninput = function(){
+			circle.setStrokeWidth( $(this).val() );
+		};
+		
+	</script>
+</body>
+</html>

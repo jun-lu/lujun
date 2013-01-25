@@ -1,0 +1,393 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>Hello Jun</title>
+    <script src="src/FlatSystem.js"></script>
+    
+</head>
+<body>
+    <div>
+        <canvas width="1000" height="500" id="helloworld"></canvas>
+        <canvas width="1000" height="500" id="helloworld2"></canvas>
+    </div>
+    <script>
+        function $(id){
+            return document.getElementById(id);
+        }
+        var ctx = new FlatSystem($('helloworld').getContext("2d"), 1000, 500);
+        ctx.setCalibration(40);
+        ctx.setProportion(2);
+        ctx.onlyQuadrant(1);
+        ctx.init();
+        var ctx2 = new FlatSystem($('helloworld2').getContext("2d"), 1000, 500);
+        ctx2.setCalibration(40);
+        ctx2.setProportion(2);
+        ctx2.onlyQuadrant(1);
+        ctx2.init();
+        
+        function Line(x1,y1, x2,y2){//开始点，终点 2点决定一条直线（线段）
+            this.x1 = x1;
+            this.y1 = y1;
+            
+            this.x2 = x2;
+            this.y2 = y2;
+            this.init();
+        }
+        Line.prototype = {
+            constructor:Line,
+            init:function(){
+                
+                if(this.x1-this.x2 == 0 ){//无斜率线段 线段平行于y轴，斜率为0  平行于x轴this.a = 0;
+                    //斜率不存在直线表示为 x = 30;//(30为实数)
+                    this.a = null;
+                    this.b = 0;
+                    this.x = this.x1;
+                    this.fx = function(y){//y可取任何数
+                       return y;
+                    };
+                }else{//正常线段
+                    
+                    this.a = (this.y1-this.y2)/(this.x1-this.x2);
+                    this.b = this.y1 - this.a*this.x1;
+                }
+                
+            },
+            fx:function(x){
+                return this.a * x + this.b;
+            },
+            draw:function(ctx){
+                ctx.printLine(this.x1, this.y1, this.x2, this.y2);
+            },
+            isOnlinePoint:function(point){// point是否在线段上
+   
+                var a = this.a;
+                var b = this.b;
+               // x1
+                //console.log(a,b);
+                if(a == null){
+                    //x 取值正确 y在线段两点之间
+                    return Math.abs(point.x - this.x) <= 1 && Math.min(this.y1, this.y2) <= point.y && Math.max(this.y1, this.y2) >= point.y;
+
+                }
+
+                /**
+                    点p的x取值范围在两个端点之间，然后把点带入指向方程.如果==0说明在直线上否则不在。（由于计算机浮点数误差可能不会绝对==0）
+                */
+                return  Math.min(this.x1, this.x2) <= point.x && Math.max(this.x1, this.x2) >= point.x && (Math.abs(point.y -( a * point.x + b )) < 1);
+
+            },
+            isLineIntersect:function(line){//是否与line线段相交
+                
+                var point = this.getIntersectPoint(line);
+                //console.log(point);
+                ctx2.printPoint(point.x, point.y);
+                if(point){//直线有交点
+                   // return this.isOnlinePoint(point) && line.isOnlinePoint(point);
+                    if(this.isOnlinePoint(point) && line.isOnlinePoint(point)){
+                        return {line:this, x:point.x, y:point.y};
+                    }
+                   return false;
+                }
+                
+                return false;
+            },
+            getIntersectPoint:function(line){//获取焦点 不相交返回false相交返回 交点坐标 必须先确定 isLineIntersect返回值为真 此方法才会正确
+                var a1 = this.a;
+                var b1 = this.b;
+
+                var a2 = line.a;
+                var b2 = line.b;
+                
+            
+                if(a1 == null && a2 == null){//平行于 y
+                    return false;
+                }
+    
+                if( (a1!=null ? a1/a2 : null) != b1/b2 ){//直线有交点
+                    /**
+                        y1 = a1*x1 + b1; 
+                        y2 = a2*x1 + b2;
+                        以上两条直线有焦点，那么焦点坐标p(x,y) 如下表示
+                    */
+          
+                    var x,y;
+                    
+                    /**a1  a2不会同时为 null*/
+                    
+                    x = - (b2 - b1) / (a2 - a1);
+                    y = line.fx(x);
+
+                    if(a1 == null){
+                        x = this.x;
+                        y = line.fx(x);
+                    }
+                    
+                    if(a2 == null){
+                        x = line.x;
+                        y = this.fx(x);
+                    }
+                    
+                    return {x:x,y:y};
+                    
+                }
+                
+                return false;
+            }
+        };
+    </script>
+	<script>
+        
+        function test(){//普通测试
+            var line = {x1:30,y1:100,x2:200,y2:300};
+            
+            var point = {
+                x:30,
+                y:110
+            };
+            var line1 = new Line(line.x1, line.y1, line.x2, line.y2);
+            line1.draw(ctx);
+            ctx.printPoint(point.x, point.y, 5,5);
+            return line1.isOnlinePoint(point);
+
+        };
+        
+        function test2(){
+            
+            // y = 3x + 5;
+            var line = {
+                x1:400,y1:400, x2:400, y2:-900
+            };
+            
+            // y = 0.5x + 10;
+            var line2 = {
+               x1:20, y1:20, x2:2000,y2:20
+            };
+            /**
+			var line2 = {
+                x1:20,y1:20, x2:1000, y2:510
+            };
+            */
+			
+            var linObj1 = new Line(line.x1,line.y1, line.x2, line.y2);
+            var linObj2 = new Line(line2.x1,line2.y1, line2.x2, line2.y2);
+            linObj1.draw(ctx);
+            linObj2.draw(ctx);
+            return linObj1.isLineIntersect(linObj2);
+        };
+       // test2();
+		
+		
+		/**
+			简单的动画开始
+		*/
+		
+		/**画布*/
+		
+		function AnimateCtx(ctx){
+			this.context = ctx;
+			this.elem = [];
+			this.setInter = null;
+            this.dps = 30;
+		}
+		AnimateCtx.prototype = {
+			constructor:AnimateCtx,
+			init:function(){
+				var _this = this;
+				this.setInter = setInterval(function(){
+					_this.draw();
+				}, this.dps);
+			},
+			clear:function(){
+				this.context.clear();
+			},
+			draw:function(){
+				this.context.init();
+				for(var i=0; i<this.elem.length; i++){
+					this.elem[i].draw(this.context);
+				}
+			},
+			stop:function(){
+				clearInterval(this.setInter);
+			},
+			addElem:function(elem){
+				this.elem.push(elem);
+			}
+			
+		};
+		
+		/*小球*/
+		function SmallBall(x, y, width, height){
+            
+			this.x =  x || 10;
+			this.y =  y || 10;
+            
+			this.r = 10;//半径
+			this.g = -6;//重力加速度 设置为10 1000毫秒 10/1000 * 60(60毫秒动画刷新一次)
+			this.t = 0;
+			this.interval = null;
+            this.elasticity = 0.5;//弹力恢复系数0 - 1
+            this.dps = 30;
+            this.ut = 0;
+            this.u = 20;//抛出力
+            this.deg = 50;
+            this.z = 0.01;//空气阻力
+            //this.k = this.getK(this.deg);
+			//this.init();
+            //this.ux = Math.cos( this.k ) * this.u;
+            //this.uy = Math.sin( this.k ) * this.u;
+
+            //this.t = -Math.sqrt(Math.abs(this.uy / (0.5 * this.g)), 2);
+            //this.sx = -this.t * this.ux + this.x;//抛射起点
+            //this.sy = this.y;//抛射起点
+            this.k = this.getK(this.deg);//根据角度算出的斜率
+            
+            this.ux = Math.cos( this.k ) * this.u; //x轴分力
+            this.uy = Math.sin( this.k ) * this.u; //y轴分力
+            
+            this.sx = this.x;
+            this.sy = this.y;
+            this.init(this.ux, this.uy, this.k);
+		};
+		SmallBall.prototype = {
+			constructor:SmallBall,
+            easeOut: function(t,b,c,d){
+                return -c * ((t=t/d-1)*t*t*t - 1) + b;
+            },
+            init1:function(ux, uy, k){
+               // console.log(ux, uy, k);
+                //this.g = -1;//重力加速度 设置为10 1000毫秒 10/1000 * 60(60毫秒动画刷新一次)
+                
+                this.k = k;//根据角度算出的斜率
+                 
+                 
+                this.ux = ux; //x轴分力
+                this.uy = uy; //y轴分力
+
+                this.t = 0;//Math.floor(-Math.sqrt(Math.abs(this.uy / (0.5 * this.g)), 2));//时间t的最小值
+                
+                this.sx = -this.t * this.ux + this.x;//抛射起点
+                this.sy = this.y;//抛射起点
+            },
+            _throw1:function(){
+                this.t++;
+                // x = ux * t + sx;
+                var x = Math.floor(this.ux * this.t + this.sx);
+                // h = 0.5*g*t^2 加速度
+                // y = uy + h + sy;
+                var y = Math.floor(this.uy + 0.5 * this.g * Math.pow(this.t, 2) + this.sy);
+               
+                var isIntersect = this.isIntersect(x, y);
+                
+                if( isIntersect && this.t > 0 ){
+                    this.x = isIntersect.x;
+                    this.y = isIntersect.y;
+                    //this.ux = ;
+                    //console.log(this.g,this.uy, this.sy, this.y);
+                    var uy = this.uy * this.elasticity;//Math.sqrt(0.5 * (this.g+this.uy) * (this.sy - this.y));//* 弹力恢复系数
+                    var ux = this.ux;
+                    if(uy < 1){
+                        this.stop();
+                        return ;
+                    }
+                    this.init(ux, uy, Math.tan(uy/ux));
+                    //a = Math.tan(uy/ux);
+                   // console.log(uy);
+                    //if(uy == 0){
+                    //    this.stop();
+                    //}
+                }else{
+                    this.x = x;
+                    this.y = y;
+                }
+                //console.log(x, y);
+                ctx2.printPoint(x, y);
+            },
+            init:function(){
+                this.t = 0;
+                this.ht = 0;
+            },
+            _throw:function(){
+                this.t++;
+                var x = this.ux * this.t;
+                var y = this.uy * this.t + 0.5 * this.g * Math.pow(this.t, 2);
+                if( Math.abs(y) < 1 ){
+                    this.ht = t;
+                }
+                var isIntersect = this.isIntersect(this.sx + x, this.sy + y);
+                this.x = this.sx + x;
+                this.y = this.sy + y;
+                
+                if( isIntersect && this.t > 1){
+                    
+                    this.x = isIntersect.x;
+                    this.y = isIntersect.y;
+                    this.sx = this.x;
+                    this.sy = this.y;
+                    
+                    //this.uy = Math.abs( 0.5 * this.g * Math.pow(this.t-this.ht, 2) ) * this.elasticity;
+                    this.uy = this.uy * this.elasticity;
+                   //console.log(this.uy);
+                    this.t = 0;
+                    //this.stop();
+                }
+                ctx2.printPoint(this.x, this.y);
+            },
+            getK:function(deg){
+                return deg/180 * Math.PI;
+            },
+			draw:function(ctx){
+                ctx.context.beginPath();
+                ctx.context.arc(ctx.getx(this.x+this.r*2),ctx.gety(this.y+this.r*2),this.r,0,Math.PI+(Math.PI*3)/2, true);//圆
+                ctx.context.fill();
+			},
+			move:function(){
+                var _this = this;
+                this.interval = setInterval(function(){
+                    _this._throw();
+                }, this.dps);
+			},
+            stop:function(){
+                clearInterval(this.interval);
+            },
+			isIntersect:function(x, h){
+               
+				var line1 = {//物体运动线
+					x1:this.x, y1:this.y, x2:x,y2:h
+				};
+
+				var line2 = {//墙壁
+					x1:20, y1:20, x2:1700,y2:20
+				};
+                
+                var lineObj1 = new Line(line1.x1,line1.y1, line1.x2, line1.y2);
+                var lineObj2 = new Line(line2.x1,line2.y1, line2.x2, line2.y2);
+                
+                lineObj1.draw(ctx2);
+                ctx2.fillText(this.t, x, this.y+h);
+                return lineObj1.isLineIntersect(lineObj2);
+			}
+		};
+		
+		/*线段*/
+		
+		
+		/***/
+		var smallBallMove = new AnimateCtx(ctx);
+		var smallBall = new SmallBall(200, 100, 10, 10);
+            //smallBall.init();
+            smallBall.move();
+ 
+		var line1 = new Line(20, 20, 1700, 20);
+		smallBallMove.init();
+		smallBallMove.addElem(smallBall);
+
+        smallBallMove.addElem(line1);
+		
+		/***/
+		
+        
+    </script>
+</body>
+</html>

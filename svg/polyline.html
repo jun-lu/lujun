@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>SVG Circle</title>
+	<script type="text/javascript" src="../src/jquery-1.8.0.min.js"></script>
+	<script type="text/javascript" src="../src/DragElement.js"></script>
+		<script type="text/javascript" src="svg.js"></script>
+	<script type="text/javascript" src="js/svgnode.js"></script>
+	<script type="text/javascript" src="js/svgpolyline.js"></script>
+
+	<style type="text/css">
+		body{margin:0;padding:0;}
+		.wrapper{position:relative;}
+		.handle{border:2px solid #2cb5fa;width:10px;height:10px;position:absolute;border-radius:15px;background:#fff;
+			margin-left:-5px;margin-top:-5px;cursor:pointer;
+		}
+	</style>
+</head>
+<body >
+	<div style="position:absolute;z-index:10;right:0;">
+		<ul>
+			<li>边框颜色:<input type="text" id="stroke" value="#f30" /></li>
+			<li>边框宽度:<input type="text" id="strokeWidth" value="2" /></li>
+			<li><input type="button" value="add point" id="add" /></li>
+		</ul>
+	</div>
+	<div class="wrapper">
+		<svg width="1000" height="768" id="svg" >
+		</svg>
+		
+	</div>
+	<!--<circle  cx="10" cy="50" r="5" fill="#fff" stroke="#cee2e9" stroke-width="2px" ></circle>-->
+	<script type="text/javascript">
+		
+		
+		
+		
+		
+		
+		var polyline = new SVGPolyline([[10,10],[120,100],[201,200]]);
+		
+		polyline.setFill( "none" );
+		polyline.setStroke( $('#stroke').val() );
+		polyline.setStrokeWidth( $('#strokeWidth').val() );
+		
+		document.getElementById("svg").appendChild( polyline.node );
+		
+		
+		
+		/**属性设置*/
+		
+
+		
+		$('#stroke')[0].oninput = function(){
+			polyline.setStroke( $(this).val() );
+		};
+		
+		$('#strokeWidth')[0].oninput = function(){
+			polyline.setStrokeWidth( $(this).val() );
+		};
+		$('#add').click(function(){
+				var x = parseInt(Math.random() * $(window).width() - 20);
+				var y = parseInt(Math.random() * $(window).height() - 20);
+				polyline.createHandleOne(x, y);
+		});
+	</script>
+</body>
+</html>
