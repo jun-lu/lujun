@@ -72,6 +72,8 @@ PieChart.prototype = {
 		var p3 = null;
 		var json = null;
 
+		this.sort(data, "number");
+
 		for(; i< data.length; i++){
 			s += data[i].number;
 		}
@@ -90,6 +92,7 @@ PieChart.prototype = {
 				name:data[i].name,
 				des:data[i].des,
 				angle:angle,
+				color:data[i].color || "#ccc",
 				p1:this.getScreenSystem( centerPoint ),
 				p2:this.getScreenSystem(this.startPoint),
 				p3:this.getScreenSystem(p3)
@@ -103,7 +106,15 @@ PieChart.prototype = {
 		this.regEvent();
 
 	},
-
+	/*
+		把传入的数据排序
+	*/
+	sort:function( data, key ){
+		return data.sort(function(a, b){
+			console.log(a[key], b[key]);
+			return a[key] - b[key];
+		});
+	},
 	//旋转一个点
 	rotatingPoint:function(x, y, angle){
 		return {
@@ -144,8 +155,8 @@ PieChart.prototype = {
 		}
 
 		path.setStrokeWidth(1);
-		path.setStroke("#ff5400");
-		path.setFill("#0fb3b1");
+		path.setStroke("#fff");
+		path.setFill(data.color);
 		this.svg.appendChild( path.node );
 	},
 	regEvent:function(){
