@@ -190,9 +190,28 @@ PieChart.prototype = {
 
 	},
     reduction:function( piePath ){
-        piePath.setP1( piePath.src.p1 );
-        piePath.setP2( piePath.src.p2 );
-        piePath.setP3( piePath.src.p3 );
+    	piePath.setAttr("transform", "transform(0, 0)");
+        //piePath.setP1( piePath.src.p1 );
+        //piePath.setP2( piePath.src.p2 );
+        //piePath.setP3( piePath.src.p3 );
+    },
+    // 使用transform:translate(x, y) 来突出一个弧度
+    prominent:function( piePath ){
+    	if(!piePath.transform){
+
+	    	var p1 = piePath.p1;
+	        var p2 = piePath.p2;
+	        var p3 = piePath.p3;
+	        //首先计算底边中点
+	        var centerPoint = {x:(p2.x+p3.x) / 2, y:(p2.y+p3.y)/2};
+	        //用中点减去定点得到向量
+	        var v = {x:centerPoint.x - p1.x, y:centerPoint.y - p1.y};
+	        var v0 = {x: v.x / Math.sqrt(v.x*v.x + v.y*v.y), y: v.y/Math.sqrt(v.x*v.x + v.y*v.y)};
+	        piePath.transform = {x:v0.x * 10, y: v0.y * 10};
+    	}
+
+    	piePath.setAttr("transform", "translate("+piePath.transform.x+", "+piePath.transform.y+")");
+
     },
 	/**
 		突出一个弧度
@@ -204,7 +223,7 @@ PieChart.prototype = {
 			4： 弧形的3个定点分别 加 第3步的结果。
 				特别注意如果弧度大于 Math.PI 定点于偏移量用减法
 	*/
-    prominent:function( piePath ){
+    prominent1:function( piePath ){
 
         //保存原始值
 
