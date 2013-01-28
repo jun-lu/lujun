@@ -111,7 +111,7 @@ PieChart.prototype = {
 	*/
 	sort:function( data, key ){
 		return data.sort(function(a, b){
-			console.log(a[key], b[key]);
+			//console.log(a[key], b[key]);
 			return a[key] - b[key];
 		});
 	},
