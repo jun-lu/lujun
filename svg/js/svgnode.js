@@ -39,7 +39,9 @@
 			this.stroke = color;
 			this.node.setAttribute("stroke", color);
 		},
-		
+		setAttr:function(key , value){
+			this.node.setAttribute(key, value);
+		},
 		bind:function(type, handle){
 			this.node.addEventListener(type, handle, false);	
 		},
