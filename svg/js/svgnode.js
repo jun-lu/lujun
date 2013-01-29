@@ -45,6 +45,12 @@
 		bind:function(type, handle){
 			this.node.addEventListener(type, handle, false);	
 		},
+		append:function( node ){
+			this.node.appendChild(node);
+		},
+		translate:function(x, y){
+			this.node.setAttribute("transform", "translate("+ x +", "+ y +")")
+		},
 		createHandle:function( number ){
 			var handles = [];
 			var node = null;

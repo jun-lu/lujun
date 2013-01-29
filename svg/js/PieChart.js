@@ -38,7 +38,7 @@ function PieChart( datalist, options ){
 
 	this.startPoint = {x:0, y:this.r};
 	this.originPoint = {x:0, y:0};
-	this.pieData = [];
+	this.pieList = [];
 	this.init();
 }
 
@@ -67,7 +67,7 @@ PieChart.prototype = {
 		var i=0;
 		var s=0; 
 		var data=this.datalist;
-		var pieData = this.pieData;
+		var pieList = this.pieList;
 		var angle = 0;
 		var p3 = null;
 		var json = null;
@@ -86,12 +86,13 @@ PieChart.prototype = {
 			p3 = this.rotatingPoint(this.startPoint.x, this.startPoint.y, angle);
 			
 			//添加数据
-			pieData.push({
+			pieList.push({
 
 				number:data[i].number,
 				name:data[i].name,
 				des:data[i].des,
-				angle:angle,
+				angle:angle,//角度
+				percentage: data[i].number/s,//百分比
 				color:data[i].color || "#ccc",
 				p1:this.getScreenSystem( centerPoint ),
 				p2:this.getScreenSystem(this.startPoint),
@@ -100,9 +101,10 @@ PieChart.prototype = {
 
 			this.startPoint = p3;
 			//
-			this.createPie( pieData[i] );	
+			this.createPie( pieList[i] );
+			this.createText( pieList[i] );	
 		}
-
+		this.setTextsPosition();
 		this.regEvent();
 
 	},
@@ -112,7 +114,7 @@ PieChart.prototype = {
 	sort:function( data, key ){
 		return data.sort(function(a, b){
 			//console.log(a[key], b[key]);
-			return a[key] - b[key];
+			return b[key] - a[key];
 		});
 	},
 	//旋转一个点
@@ -144,59 +146,62 @@ PieChart.prototype = {
 	},
 
 	//创建弧度
-	createPie:function( data ){
-		var path = new SVGPath(data.p1, data.p2, data.p3);
+	createPie:function( item ){
+		var path = new SVGPath(item.p1, item.p2, item.p3);
 
-		data.node = path;
-		if(data.angle > Math.PI){
+		item.pathNode = path;
+		if(item.angle > Math.PI){
 
 			path.setLarge( 1 );
 
 		}
-
+		path.setAttr("title", item.name);
 		path.setStrokeWidth(1);
 		path.setStroke("#fff");
-		path.setFill(data.color);
+		path.setFill(item.color);
 		this.svg.appendChild( path.node );
 	},
 	regEvent:function(){
 
 		var _this = this;
-		var prive = null;
+		var priveItem = null;
 		var timeout = null;
-		var pieData = this.pieData;
+		var pieList = this.pieList;
 
-		for(var i=0; i<pieData.length; i++){
-			bind( pieData[i].node );
+		for(var i=0; i<pieList.length; i++){
+			bind( pieList[i] );
 			
 		}
 
-		function bind( piePath ){
+		function bind( item ){
 
-			piePath.bind('mouseover', function(e){
+			item.pathNode.bind('mouseover', function(e){
 				clearTimeout( timeout );
-				prive && _this.reduction( prive );
-				_this.prominent( piePath);
-				prive = piePath;
+				priveItem && _this.reduction( priveItem );
+				_this.prominent( item);
+				priveItem = item;
 			});
 
-			piePath.bind('mouseout', function(e){
+			item.pathNode.bind('mouseout', function(e){
 				timeout = setTimeout(function(){
-					_this.reduction( prive );
+					_this.reduction( priveItem );
 				}, 500);
 			});
 
 		}
 
 	},
-    reduction:function( piePath ){
-    	piePath.setAttr("transform", "transform(0, 0)");
+    reduction:function( item ){
+    	
+    	item.pathNode.setAttr("transform", "transform(0, 0)");
+    	item.textNode.setFill("inherit");
         //piePath.setP1( piePath.src.p1 );
         //piePath.setP2( piePath.src.p2 );
         //piePath.setP3( piePath.src.p3 );
     },
     // 使用transform:translate(x, y) 来突出一个弧度
-    prominent:function( piePath ){
+    prominent:function( item ){
+    	var piePath =  item.pathNode;
     	if(!piePath.transform){
 
 	    	var p1 = piePath.p1;
@@ -211,8 +216,43 @@ PieChart.prototype = {
     	}
 
     	piePath.setAttr("transform", "translate("+piePath.transform.x+", "+piePath.transform.y+")");
+    	item.textNode.setFill("#f30");
+    },
 
-    }
+    /*
+		createText 
+		图标文字绘制
+    */ 
+
+
+    createText:function( item ){
+
+    	if(!this.gNode){
+    		this.textHeight = 0;
+    		this.gNode = new SVGNode("g");
+    		this.gNode.initialize();
+    		this.gNode.setFill("#666");
+    		//this.gNode.translate(this.centerPoint.x + this.r + 20, this.centerPoint.y);
+    		this.svg.appendChild( this.gNode.node );
+    	}
+
+   		var text = new SVGNode("text");
+    	var tspan = new SVGNode("tspan");
+    		text.initialize();
+    		tspan.initialize();
+    	//text.setFill("#ccc");
+    	tspan.node.textContent = item.name + ", " +parseInt(item.percentage*10000)/100+"%";
+		text.append( tspan.node );
+		text.translate(0, this.textHeight);
+    	this.gNode.append( text.node );
+		this.textHeight += text.node.getBBox().height + 5;
+		item.textNode = text;
+    },
+    setTextsPosition:function(x, y){
+    	x = x || this.centerPoint.x + this.r + 40;
+    	y = y || this.centerPoint.y + this.r - this.textHeight;	
+    	this.gNode.translate(x, y);
+    },
 	/**
 		突出一个弧度
 
