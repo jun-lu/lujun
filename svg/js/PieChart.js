@@ -212,7 +212,7 @@ PieChart.prototype = {
 
     	piePath.setAttr("transform", "translate("+piePath.transform.x+", "+piePath.transform.y+")");
 
-    },
+    }
 	/**
 		突出一个弧度
 
@@ -223,6 +223,7 @@ PieChart.prototype = {
 			4： 弧形的3个定点分别 加 第3步的结果。
 				特别注意如果弧度大于 Math.PI 定点于偏移量用减法
 	*/
+/*	
     prominent1:function( piePath ){
 
         //保存原始值
@@ -248,7 +249,7 @@ PieChart.prototype = {
             var v0 = {x: v.x / Math.sqrt(v.x*v.x + v.y*v.y), y: v.y/Math.sqrt(v.x*v.x + v.y*v.y)};
             //弧形的3个定点分别 加 第3步的结果
             var v2 = {x:v0.x*10, y:v0.y*10};
-            /**辅助代码
+            *辅助代码
              var handles = piePath.createHandle( 1 );
              var p1node = $(handles[0]);
 
@@ -258,7 +259,7 @@ PieChart.prototype = {
             });
 
              p1node.init();
-             */
+             
 
             // 特别注意如果弧度大于 Math.PI 定点于偏移量用减法
             if(piePath.largeFlag == 0){
@@ -295,6 +296,6 @@ PieChart.prototype = {
             }
         }
 
-    }
+    }*/
 
 };
