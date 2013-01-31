@@ -1,0 +1,144 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<title>Hello Jun</title>
+	<link rel="stylesheet" href="qunit/qunit.css" type="text/css" media="screen">
+	<script type="text/javascript" src="qunit/qunit.js"></script>
+</head>
+<body>
+	<h1 id="qunit-header">QUnit Test Suite</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="qunit-fixture">test markup</div>
+	
+	
+	<script>
+		var array = [
+			{
+				arr:[-20,-19, -18, -17, -16, -15, -14, -13, -12, -11, -10, -9, -8, -7, -6, 0, 1, 2 ,3,4,7, 8,9,10,11,12,13,14,15,16,17],
+				result:0
+			},
+			{
+				arr:[-20,-19, -18, -17, -16, -15, -14, -13, -12, -11, 0, 1, 2 ,3,4,7, 8,9,10,11,12,13,14,15,16,17],
+				result:0
+			},
+			{
+				arr:[9,10,11,12,13,14,15,16,17],
+				result:9
+			},
+			{
+				arr:[-20,-19, -18, -17, -16, -15, -14, -13, -12, -11],
+				result:-11
+			}
+		];
+		
+		
+		function createTestDataItem(len){
+			var arr = [];
+			var min = 10000;
+			for(var i=0; i<len; i++){
+				arr.push(parseInt(Math.random() * 1000)  * (Math.random() > 0.5 ? 1 : -1));
+			}
+			arr.sort(function(a, b){
+				return a - b;
+			});
+			
+			for(var i=0; i<arr.length; i++){
+				if(Math.abs(arr[i]) < Math.abs(min)){
+					min = arr[i]
+				}
+			}
+			return {arr:arr, result:min}
+		}
+		
+		function createTestData(){
+			var item = null;
+			for(var i=0; i< 200; i++){
+				item = createTestDataItem(parseInt(Math.random() * 1000) + 2);
+				array.push(item);
+			}
+		}
+		
+		createTestData();
+		
+		
+		var arrj = 0;
+		/**
+			arr 已经被升序排列的数组
+			arr.length 必须大于等于2
+		*/
+		function getMinAbs( arr, st, nt ){
+			
+			arrj++;
+			var st = st || 0;
+			var nt = nt || arr.length - 1;
+			
+			var t = st + parseInt((nt - st) / 2);
+		
+			//console.log(st, t, nt);
+			
+			if( nt - st == 1 ){
+				return Math.abs(arr[st]) > Math.abs( arr[nt] ) ? arr[nt] : arr[st];
+			}
+			
+			//if( nt - st == 2 ){
+			//	return arr[st] + arr[nt] >= arr[nt] ? arr[st] : getMinAbs(arr, t, nt);
+			//}
+			
+			if( arr[st] + arr[t] < arr[t] ){//在正负交叉阶段或者全负阶段
+				
+				if( arr[t] + arr[nt] > arr[nt] ){// arr[t] 落在正阶段
+					
+					return getMinAbs(arr, st, t);
+				}
+
+				return getMinAbs(arr, t, nt);
+				
+			}
+			//全为正数
+			return arr[st];
+		}
+		
+		
+		function getMinAbs2(arrParam){
+         
+				var midNum;
+				var absSmall;
+				for(var i = 0;i < arrParam.length; i++)
+				{
+				  if(arrParam[i] > 0) {
+					 midNum = i;
+					 break;
+				  }
+				}
+				 
+				if(arrParam[midNum - 1] <= 0 && (0 - arrParam[midNum - 1]) < arrParam[midNum]) {
+				   absSmall = arrParam[midNum - 1];
+				} else {
+				   absSmall = arrParam[midNum];
+				}
+				 
+				return absSmall
+		}
+		
+		module("getMinAbs function test");
+
+		test("getMinAbs", function(){
+
+			for(var i=0; i<array.length; i++){
+				arrj = 0;
+				equals(getMinAbs(array[i].arr), array[i].result, array[i].arr);
+				console.log(arrj);
+			}
+		});
+		
+
+		
+		
+	</script>
+</body>
+</html>
