@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>(练习)用canvas画圆和椭圆，不使用canvas提供的api</title>
+	<script src="src/FlatSystem.js"></script>
+</head>
+<body>
+	
+	<canvas id="tutorial" width="1000" height="500"></canvas>
+	
+	<script type="text/javascript">
+		var canvas = document.getElementById("tutorial");
+		var flatSyatem = new FlatSystem( canvas.getContext('2d'), 1000,500 );
+		
+        flatSyatem.setProportion(1);
+        flatSyatem.setCalibration(50);
+		//ctx.onlyQuadrant(0);
+		flatSyatem.init();
+		flatSyatem.build();
+		
+		flatSyatem.printPoint(20.33683215379001, 45.67727288213004 );
+		
+		function Circle( r ){
+			this.r = r;
+			
+			this.lx = 0;
+			this.ly = 0;
+		};
+		
+		Circle.prototype = {
+			translate:function(lx, ly){
+				this.lx = lx;
+				this.ly = ly;
+				return this;
+			},
+			draw:function( flatSyatem ){
+				var x,y;
+				x = y = 0;
+				for(var i=0; i<360; i+=0.1){
+					y = Math.sin(i*Math.PI/180) * this.r + this.ly;
+					x = Math.cos(i*Math.PI/180) * this.r + this.lx;
+					flatSyatem.printPoint(x, y, 2, 2);
+				}
+				return this;
+			}
+		};
+		
+		function Ellipse(r1, r2){
+		
+			this.r1 = r1;
+			this.r2 = r2;
+			
+			this.lx = 0;
+			this.ly = 0;
+		}
+		
+		Ellipse.prototype = {
+			translate:function(lx, ly){
+				this.lx = lx;
+				this.ly = ly;
+				return this;
+			},
+			draw:function( flatSyatem ){
+				var x,y;
+				x = y = 0;
+				for(var i=0; i<360; i+=0.1){
+					y = this.r2 * Math.sin(i*Math.PI/180)  + this.ly;
+					x = this.r1 * Math.cos(i*Math.PI/180)  + this.lx;
+					flatSyatem.printPoint(x, y, 2, 2);
+				}
+				return this;
+			}
+		};
+		
+		
+		(new Circle( 200 )).draw(flatSyatem);
+		
+		(new Ellipse( 100, 200 )).draw(flatSyatem);
+		
+	</script>
+</body>
+</html>

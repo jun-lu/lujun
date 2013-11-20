@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style type="text/css">
+		
+		h1{font-size:14px;}
+		
+		.leader{border:1px solid #fff;
+			font-size:12px;
+			position:absolute;
+			border-radius:2px;
+			-webkit-box-shadow:0 2px 15px rgba(0,0,0,0.5);
+			min-width:5em;
+			min-height:3em;
+			//left:100px;
+			//top:100px;
+		}
+		.leader-triangle,.leader-triangle-in{position:absolute;border:15px solid transparent;}
+		.leader-triangle-top{border-bottom-color:#d7d7d7;top:-32px;}
+		.leader-triangle-top .leader-triangle-in{border-bottom-color:#fff;top:-14px;left:-15px;}
+		
+		.leader-triangle-bottom{border-top-color:#d7d7d7;bottom:-31px;}
+		.leader-triangle-bottom .leader-triangle-in{border-top-color:#fff;top:-16px;left:-15px;}
+		
+		.leader-triangle-left{border-right-color:#d7d7d7;left:-31px;}
+		.leader-triangle-left .leader-triangle-in{border-right-color:#fff;top:-15px;left:-14px;}
+		
+		.leader-triangle-right{border-left-color:#d7d7d7;right:-31px;}
+		.leader-triangle-right .leader-triangle-in{border-left-color:#fff;top:-15px;left:-16px;}
+		
+		.leader-content{padding:1em;}
+	</style>
+</head>
+<body>
+	<h1>一个智能的提示框，可以出现在4个方向上(80%)</h1>
+	<input type="button" value="弹出提示" id="btn1" style="margin:300px;margin-top:200px;" />
+	<div class="leader" style="display:none;">
+		<div class="leader-triangle leader-triangle-top" style="left:10px;">
+			<div class="leader-triangle-in"></div>
+		</div>
+		
+		<div class="leader-triangle leader-triangle-bottom" style="left:10px;">
+			<div class="leader-triangle-in"></div>
+		</div>
+		
+		<div class="leader-triangle leader-triangle-left" style="top:10px;">
+			<div class="leader-triangle-in"></div>
+		</div>
+		
+		<div class="leader-triangle leader-triangle-right" style="top:10px;">
+			<div class="leader-triangle-in"></div>
+		</div>
+		
+		<div class="leader-content" >
+			<div id="xxx">
+				<h1>更只能的新版搜索框</h1>
+				<p>
+					搜索框是一切探索的起点，除了用来查找地址外，还可以点击空白来访问搜索框来快速访问下列内容。
+					<ul>
+						<li>最近搜索过的内容</li>
+						<li>路线（有多个目的地）</li>
+						<li>您的家庭住址和工作地点</li>
+						<li>公交线路、路况和骑车路线（如果有的话）</li>
+					</ul>
+				</p>
+			</div>
+		</div>
+	</div>
+	
+	
+	<script type="text/javascript">
+		
+		/**
+			new Leader(html|dom[, direction][, options])
+			
+			html string
+			dom Node
+			direction string [top,left,bottom,right]
+			
+			options = {
+				closeButton:true,//
+				isDrag:true//是否拖动
+			}
+			
+			setFollow()//设置对齐一个dom元素
+			
+			
+			show( is );//显示
+			
+			
+			onClose()//被关闭
+			onMove(x, y)//移动
+			
+		*/
+		
+		
+		
+		function animate(elem, style, val, callBack, time, px){
+			px = px || 'px'; //---   这里还需要进一步判断
+			time = time || 600;
+			var b = parseFloat( css(elem, style) );
+			val = val - b;
+			var st = new Date().getTime();
+			var a = setInterval(function(){
+				var t = new Date().getTime() - st;
+				if( t > time){t = time;clearInterval(a);callBack&&callBack()}
+				elem.style[style] = parseFloat(tween.eain(t, b, val, time));
+			}, 15);
+			return a;
+		}
+		
+		var tween = {
+			eain:function(t, b, c, d){ return c*((t=t/d-1)*t*t + 1) + b;}
+		};
+		
+		
+		function Leader( contentNode,  direction, options){
+			this.id = id();
+			this.ui = {};
+			this.options = options || {};
+			//方向
+			this.direction = Leader.DIRECTION[direction] || Leader.DIRECTION.default;
+			//内容
+			this.contentNode = typeof contentNode == "string" ? htmlForElement(contentNode) : contentNode;
+			//三角形位置
+			this.triangleRect = {width:15,height:15,left:0, top:0};//
+			this.floowElement = null;
+			this.position = null;
+			this.offset = null;
+			this.initialization();
+		};
+		Leader.DIRECTION = {
+			"default":"right",
+			"left":"right",
+			"right":"left",
+			"bottom":"top",
+			"top":"bottom"
+		};
+		Leader.prototype = {
+			constructor:Leader,
+			initialization:function(){
+				var html = this.resolveTmpl();
+				document.body.appendChild( htmlForElement(html) );
+				var leader = this.ui.leader = $( this.id );
+				this.ui.triangle = leader.getElementsByClassName("leader-triangle")[0];
+				this.ui.content = leader.getElementsByClassName("leader-content")[0];
+				this.ui.content.appendChild( this.contentNode );
+				
+			},	
+			resolveTmpl:function(){
+				
+				var html = '<div class="leader" id="'+ this.id +'" style="opacity:0">\
+					<div class="leader-triangle leader-triangle-'+this.direction+'" >\
+						<div class="leader-triangle-in"></div>\
+					</div>\
+					<div class="leader-content"></div>\
+				</div>';
+				
+				return html;
+				
+			},
+			setFollow:function( element ){
+				/**
+					ClientRect:{
+						bottom: 504
+						height: 66
+						left: 240
+						right: 1252
+						top: 438
+						width: 1012
+					}
+				*/
+				this.floowElement = element;
+				this.updatePosition();
+				
+			},
+			setOffset:function( offset ){
+				this.offset = offset;//{top:10, left:10}
+			},
+			setPosition:function( left, top ){
+				
+			},
+			setTop:function( top ){
+				this.ui.leader.style.top = top + "px";
+			},
+			setLeft:function( left ){
+				this.ui.leader.style.left = left + "px";
+			},
+			show:function(){
+				this.updatePosition();
+				this.ui.leader.style.display = "block";
+				animate(this.ui.leader, "opacity", 1);
+			},
+			updatePosition:function(){
+				var rect = this.floowElement.getBoundingClientRect();
+				var leaderRect = this.ui.leader.getBoundingClientRect();
+				var position = this.calculatePosition(rect, leaderRect);
+				this.position = position;
+				this.setLeft( position.left );
+				this.setTop( position.top );
+			},
+			/**
+				根据clientRect,this.direction 计算出正确的top 和 left值
+			*/
+			calculatePosition:function( clientRect, leaderRect){
+				//三角的偏移量
+				var triangleRect = this.triangleRect;
+				return {
+					"left":function(clientRect, leaderRect){
+						return {
+							left:clientRect.left + clientRect.width + triangleRect.width,
+							top:clientRect.top + clientRect.height/2 - triangleRect.height
+						}
+					},
+					"right":function(clientRect, leaderRect){
+						return {
+							left:clientRect.left -  triangleRect.width - leaderRect.width,
+							top:clientRect.top + clientRect.height/2 - triangleRect.height
+						}
+					},
+					"top":function(clientRect, leaderRect){
+						return {
+							left:clientRect.left,
+							top:clientRect.top + clientRect.height + triangleRect.height
+						}
+					},
+					"bottom":function(clientRect, leaderRect){
+						return {
+							left:clientRect.left,
+							top:clientRect.top  - triangleRect.height - leaderRect.height
+						}
+					}
+				}[this.direction](clientRect, leaderRect);
+			},
+			onClose:function(){},
+			onMove:function(x, y){}
+		};
+		
+		function S4(){
+			return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+		}
+
+		function id(){
+			return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+		}
+		
+		function $( id ){
+			return document.getElementById( id );
+		};
+		
+		// html to Element
+		function htmlForElement(html){
+			var ele = document.createElement("DIV");
+			var documentFragment = document.createDocumentFragment("DIV");
+			ele.innerHTML = html;
+			while(ele.firstChild){
+				documentFragment.appendChild(ele.firstChild);
+			}
+			return documentFragment;
+		}
+		
+		function append(element, content){
+			if(typeof content == "string"){
+				content = htmlForElement(content);
+			}
+			return element.appendChild( content );//如果传入字符串 返回值是 Document Fragment 并且为空
+		}
+		
+		function css(elem, key, value){
+			if(value === undefined){
+				key = key.replace(/([A-Z])/g, "-$1");
+				key = key.toLowerCase();
+				return parseFloat(window.getComputedStyle(elem, null).getPropertyValue(key));
+			}else{
+				elem.style[key] = value;
+				return elem;
+			}
+		}
+		
+		$('btn1').onclick = function(){
+			var leader = new Leader( $('xxx'), "bottom");
+			leader.setFollow( this );
+			leader.show();
+		};
+		
+		$('btn1').onclick = function(){
+			var leader = new Leader( $('xxx'), "bottom");
+			leader.setFollow( this );
+			leader.show();
+		};
+		
+		$('btn1').onclick = function(){
+			var leader = new Leader( $('xxx'), "bottom");
+			leader.setFollow( this );
+			leader.show();
+		};
+		//leader.setFollow();//设置
+	</script>
+</body>
+</html>
