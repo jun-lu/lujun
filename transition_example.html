@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>hello</title>
+		<meta charset="UTF-8"/>
+		<style type="text/css">
+			*{margin:0;padding:0}
+			.module{height:900px;background:#ccc;font-size:48px;text-align:center;position:relative;}
+			.module span{
+				position:absolute;
+				top:300px;
+				-moz-transition:all .5s ease-out;
+				-webkit-transition:all .5s ease-out;
+			}
+			
+			
+			
+			.module.focus .hello-h{margin-left:-100px;}
+			.module.focus .hello-e{margin-left:-50px;}
+			.module.focus .hello-l{margin-left:0px;}
+			.module.focus .hello-l2{margin-left:50px;}
+			.module.focus .hello-o{margin-left:100px;}
+			
+			
+			.module.focus .world-w{margin-left:-100px;}
+			.module.focus .world-o{margin-left:-50px;}
+			.module.focus .world-r{margin-left:0px;}
+			.module.focus .world-l{margin-left:50px;}
+			.module.focus .world-d{margin-left:100px;}
+			
+			.module.focus .end-e{margin-left:-50px;}
+			.module.focus .end-n{margin-left:0px;}
+			.module.focus .end-d{margin-left:50px;}
+
+			
+			
+		</style>
+	</head>
+
+	<body>
+		<div class="module">
+			<span class="hello-h">H</span>
+			<span class="hello-e">e</span>
+			<span class="hello-l ">l</span>
+			<span class="hello-l2 ">l</span>
+			<span class="hello-o">o</span>
+		</div>
+		<div class="module">
+			<span class="world-w">W</span>
+			<span class="world-o">o</span>
+			<span class="world-r">r</span>
+			<span class="world-l">l</span>
+			<span class="world-d">d</span>
+		</div>
+		<div class="module">
+			<span class="end-e">E</span>
+			<span class="end-n">n</span>
+			<span class="end-d">d</span>
+		</div>
+		<script type="text/javascript">
+			var page = {
+				prevIndex:-1,
+				index:0,
+				init:function(){
+					this.ui = {
+						modules:document.querySelectorAll(".module")
+					};
+					this.regEvent();
+					this.focusIndex();
+				},
+				regEvent:function(){
+					var self = this;
+					window.onmousewheel = function(e){
+						//1向上  -1向下
+						var dir = e.wheelDelta > 0 ? -1 : 1;
+						console.log(dir)
+						self.index += dir;
+						self.index = self.index < 0 ? 0 : self.index;
+						self.index = self.index > 2 ? 2 : self.index;
+						console.log(self.index);
+						self.focusIndex();
+						return false;
+					}
+				},
+				focusIndex:function(){
+					if(this.prevIndex != this.index){
+						this.ui.modules[this.index].className = "module focus";
+						if(this.prevIndex != -1){
+							this.ui.modules[this.prevIndex].className = "module";
+						}
+						this.prevIndex = this.index;
+						console.log(this.index * 900);
+						document.body.scrollTop = this.index * 900;
+					}
+				}
+			};
+			page.init();
+		</script>
+	</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>padding-bottom</title>
+	<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+	<style type="text/css">
+
+		/**
+			after + background + linear-gradient
+		*/
+		.box{
+		    position: relative;
+		    padding: 20px 0;
+		    font-size: 16px;
+		    font-weight: bold;
+		    text-align: center;
+		    margin: 0 10px 10px 0;
+		    -webkit-box-sizing: border-box;
+		    background: -webkit-linear-gradient(top, #fafafa 0%, #f0f0f0 50%, #fafafa 100%);
+		}
+
+		.box::after {
+		    content: '';
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    width: 100%;
+		    height: 100%;
+		    background-image: -webkit-linear-gradient(top, #aaa, #aaa 60%, transparent 60%),
+		        -webkit-linear-gradient(right, #aaa, #aaa 60%, transparent 60%),
+		        -webkit-linear-gradient(bottom, #aaa, #aaa 60%, transparent 60%),
+		        -webkit-linear-gradient(left, #aaa, #aaa 60%, transparent 60%);
+		    background-size: 100% 1px, 1px 100%;
+		    background-position: top, right top, bottom, left top;
+		    background-repeat: no-repeat;
+		}
+
+		/***
+			
+		*/
+
+		.box4{
+		    position: relative;
+		    width: 140px;
+		    padding: 20px 0;
+		    font-size: 16px;
+		    font-weight: bold;
+		    text-align: center;
+		    margin: 0 10px 10px 0;
+		    -webkit-box-sizing: border-box;
+		    background-color:#fafafa;
+		    background-image: -webkit-linear-gradient(top, #aaa, #aaa 60%, transparent 60%),
+		        -webkit-linear-gradient(right, #aaa, #aaa 60%, transparent 60%),
+		        -webkit-linear-gradient(bottom, #aaa, #aaa 60%, transparent 60%),
+		        -webkit-linear-gradient(left, #aaa, #aaa 60%, transparent 60%);
+		    background-size: 100% 1px, 1px 100%;
+		    background-position: top, right top, bottom, left top;
+		    background-repeat: no-repeat;
+		}
+
+
+		/***
+			transform scale
+		*/
+		.box2{
+		    position: relative;
+		    width: 140px;
+		    padding: 20px 0;
+		    font-size: 16px;
+		    font-weight: bold;
+		    margin: 0 10px 10px 0;
+		    -webkit-box-sizing: border-box;
+		    background: -webkit-linear-gradient(top, #fafafa 0%, #f0f0f0 50%, #fafafa 100%);
+		}
+
+		.box2::after {
+		    content: '';
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    width: 200%;
+		    height: 200%;
+		    border: 1px solid #aaa;
+		    border:1px 0;
+		    -webkit-box-sizing: border-box;
+		    -webkit-transform: scale(0.5);
+		    -webkit-transform-origin: left top;
+		}
+
+
+
+		/***
+			transform scale
+		*/
+		.box3{
+		    position: relative;
+		    width: 140px;
+		    padding: 20px 0;
+		    font-size: 16px;
+		    font-weight: bold;
+		    margin: 0 10px 10px 0;
+		    -webkit-box-sizing: border-box;
+		    background:#fafafa;
+		}
+
+		.box3::after {
+		    content: '';
+		    position: absolute;
+		    top: 0;
+		    left: 0;
+		    height:100%;
+		    width:100%;
+    		border-width:1px;
+    		border-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAADgzO9IAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjRFMEQ5Rjc5RDk3QTExRTNBQTA3QjMyODc2NEUyN0EzIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjRFMEQ5RjdBRDk3QTExRTNBQTA3QjMyODc2NEUyN0EzIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NEUwRDlGNzdEOTdBMTFFM0FBMDdCMzI4NzY0RTI3QTMiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NEUwRDlGNzhEOTdBMTFFM0FBMDdCMzI4NzY0RTI3QTMiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7VBHDLAAAAMUlEQVR42mK8fPnyfwYsgAVKM6KJ/2eCsXR0dMAYBpgYcACYUQxXrlzBKoHhAIAAAwA5WAkNJZ43FgAAAABJRU5ErkJggg==) 2 repeat
+	
+		}
+
+	</style>
+</head>
+<body>
+
+	<!--
+	-->
+	<div class="box">
+		after + background + linear-gradient
+	</div>
+
+	<div class="box4">
+		background + linear-gradient
+	</div>
+
+	<div class="box2">
+		transform scale
+	</div>
+
+	<div class="box3">
+		border-image
+	</div>
+
+</body>
+</html>
